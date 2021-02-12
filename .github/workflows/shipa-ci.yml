@@ -64,4 +64,4 @@ jobs:
     # Deploy the Docker image to the cluster through Shipa
     - name: Deploy
       run: |-
-        ./shipa app deploy -a ${{ secrets.SHIPA_APP }} -i gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA 
+        ./shipa app deploy -a ${{ secrets.SHIPA_APP }} -i gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA --step-interval=1m --step-weight=10 --steps=6
