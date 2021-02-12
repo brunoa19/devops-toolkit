@@ -34,15 +34,14 @@ jobs:
     - run: |-
         gcloud --quiet auth configure-docker
 
-    # Create Devops-Toolkit static files
+    # Install Hugo
     - run: |-
         wget https://github.com/gohugoio/hugo/releases/download/v0.55.4/hugo_0.55.4_Linux-64bit.deb
         sudo dpkg -i hugo_0.55.4_Linux-64bit.deb
 
-    # Build the Docker image
+    # Build Hugo and Docker image
     - name: Build
       run: |-
-        make init
         make build
         docker build \
           --tag "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA" \
