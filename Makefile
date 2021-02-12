@@ -6,7 +6,3 @@ init:
 
 build:
 	hugo
-
-dev:
-	hugo server
-

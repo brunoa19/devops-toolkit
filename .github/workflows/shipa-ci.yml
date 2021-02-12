@@ -42,7 +42,6 @@ jobs:
     # Create Devops-Toolkit static files
     - run: |-
         make init
-        make dev
         make build
 
     # Build the Docker image
