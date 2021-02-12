@@ -1,4 +1,4 @@
-name: Build and Deploy Through Shipa
+name: Build and Deploy DevOps-Toolkit
 
 on:
   push:
