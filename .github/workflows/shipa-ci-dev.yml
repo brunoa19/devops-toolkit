@@ -2,7 +2,7 @@ name: DevOps Toolkit - Dev
 
 on:
   push:
-    branches: [ main ]
+    branches: [ development ]
   pull_request:
     branches: [ development ]
 
