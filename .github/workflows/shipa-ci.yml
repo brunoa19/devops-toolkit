@@ -1,4 +1,4 @@
-name: Build and Deploy DevOps-Toolkit
+name: DevOps Toolkit - Prod
 
 on:
   push:
