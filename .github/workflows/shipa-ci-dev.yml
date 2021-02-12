@@ -1,4 +1,4 @@
-me: DevOps Toolkit - Dev
+name: DevOps Toolkit - Dev
 
 on:
   push:
