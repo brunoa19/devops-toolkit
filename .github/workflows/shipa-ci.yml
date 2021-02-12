@@ -36,6 +36,10 @@ jobs:
 
     # Create Devops-Toolkit static files
     - run: |-
+        sudo apt install hugo
+
+    # Create Devops-Toolkit static files
+    - run: |-
         make init
         make dev
         make build
