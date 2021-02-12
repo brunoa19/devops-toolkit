@@ -1,0 +1,66 @@
+name: Build and Deploy Through Shipa
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  IMAGE: static-site
+
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: ACTIONS_ALLOW_UNSECURE_COMMANDS
+      id: ACTIONS_ALLOW_UNSECURE_COMMANDS
+      run: echo 'ACTIONS_ALLOW_UNSECURE_COMMANDS=true' >> $GITHUB_ENV
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Setup gcloud CLI
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@0.1.3
+      with:
+        service_account_key: ${{ secrets.GKE_SA_KEY }}
+        project_id: ${{ secrets.GKE_PROJECT }}
+
+    # Configure Docker to use the gcloud command-line tool as a credential
+    # helper for authentication
+    - run: |-
+        gcloud --quiet auth configure-docker
+
+    # Create Devops-Toolkit static files
+    - run: |-
+        make init
+        make dev
+        make build
+
+    # Build the Docker image
+    - name: Build
+      run: |-
+        docker build \
+          --tag "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA" \
+          --build-arg GITHUB_SHA="$GITHUB_SHA" \
+          --build-arg GITHUB_REF="$GITHUB_REF" \
+          .
+
+    # Push the Docker image to Google Container Registry
+    - name: Publish
+      run: |-
+        docker push "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA"
+
+    # Setup Shipa CLI
+    - run: |-
+        curl -s https://storage.googleapis.com/shipa-client/install.sh | bash
+        shipa target add shipa ${{ secrets.SHIPA_SERVER }} -s 
+        echo ${{ secrets.SHIPA_PASS }} | shipa login ${{ secrets.SHIPA_USER }}
+
+    # Deploy the Docker image to the cluster through Shipa
+    - name: Deploy
+      run: |-
+        ./shipa app deploy -a ${{ secrets.SHIPA_APP }} -i gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
