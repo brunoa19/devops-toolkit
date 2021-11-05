@@ -58,7 +58,7 @@ jobs:
     - run: |-
         sudo wget https://storage.googleapis.com/shipa-client/1.4.0-cloud/shipa_linux_amd64
         sudo chmod +x shipa_linux_amd64 && mv -v shipa_linux_amd64 shipa
-        ./shipa target add shipa ${{ secrets.SHIPA_SERVER }} -s 
+        ./shipa target-add shipa ${{ secrets.SHIPA_SERVER }} -s 
         echo ${{ secrets.SHIPA_PASS }} | ./shipa login ${{ secrets.SHIPA_USER }}
 
     # Deploy the Docker image to the cluster through Shipa
